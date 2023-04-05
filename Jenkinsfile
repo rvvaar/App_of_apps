@@ -56,5 +56,15 @@ pipeline {
                 sh "python3 -m pytest test/selenium/frontendTest.py"
             }
         }
+        stage('Run terraform') {
+            steps {
+                dir('Terraform') {                
+                    git branch: 'master', url: 'https://github.com/rvvaar/Terraform.git'
+                    withAWS(credentials:'AWS', region: 'us-east-1') {
+                            sh 'terraform init && terraform apply -auto-approve -var-file="terraform.tfvars"'
+                    } 
+                }
+            }
+        }
     }       
 }
